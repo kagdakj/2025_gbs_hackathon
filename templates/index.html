@@ -36,12 +36,23 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 1rem;
     }
 
     .header-content {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+    }
+
+    .search-box {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .search-box input {
+      max-width: 320px;
     }
 
     .logo {
@@ -415,6 +426,11 @@
       border-color: #fb923c;
     }
 
+    .upload-area.dragover {
+      border-color: #f97316;
+      background: #fff7ed;
+    }
+
     .upload-icon {
       margin: 0 auto 0.75rem;
       color: #9ca3af;
@@ -663,6 +679,9 @@
         </div>
         <h1>경기북과학고 분실물 저장소</h1>
       </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" class="form-input" placeholder="검색 (제목, 내용, 위치 등)">
+      </div>
     </div>
   </header>
 
@@ -877,6 +896,18 @@
 
     let selectedCategory = 'all';
     let selectedColor = 'all';
+    let searchTerm = '';
+
+    const colorGradients = {
+      '검정': 'linear-gradient(135deg, #111827, #374151)',
+      '흰색': 'linear-gradient(135deg, #f9fafb, #e5e7eb)',
+      '회색': 'linear-gradient(135deg, #6b7280, #9ca3af)',
+      '빨강': 'linear-gradient(135deg, #ef4444, #f97316)',
+      '파랑': 'linear-gradient(135deg, #2563eb, #38bdf8)',
+      '초록': 'linear-gradient(135deg, #16a34a, #22c55e)',
+      '노랑': 'linear-gradient(135deg, #f59e0b, #facc15)',
+      '기타': 'linear-gradient(135deg, #a855f7, #6366f1)'
+    };
 
     // Elements
     const postsGrid = document.getElementById('postsGrid');
@@ -885,6 +916,7 @@
     const filterDropdown = document.getElementById('filterDropdown');
     const categoryFilter = document.getElementById('categoryFilter');
     const colorFilter = document.getElementById('colorFilter');
+    const searchInput = document.getElementById('searchInput');
     const fabBtn = document.getElementById('fabBtn');
     const modalOverlay = document.getElementById('modalOverlay');
     const closeBtn = document.getElementById('closeBtn');
@@ -904,11 +936,24 @@
     let pendingDeleteId = null;
 
     // Render posts
+    function matchesSearch(post, term) {
+      if (!term) return true;
+      const haystack = [
+        post.title,
+        post.content,
+        post.location,
+        post.category,
+        post.color
+      ].filter(Boolean).join(' ').toLowerCase();
+      return haystack.includes(term);
+    }
+
     function renderPosts() {
       const filteredPosts = posts.filter(post => {
         const categoryMatch = selectedCategory === 'all' || post.category === selectedCategory;
         const colorMatch = selectedColor === 'all' || post.color === selectedColor;
-        return categoryMatch && colorMatch;
+        const searchMatch = matchesSearch(post, searchTerm);
+        return categoryMatch && colorMatch && searchMatch;
       });
 
       if (filteredPosts.length === 0) {
@@ -922,6 +967,7 @@
 
       postsGrid.innerHTML = filteredPosts.map((post, index) => {
         const isMine = post.authorId === currentUserId;
+        const dotStyle = colorGradients[post.color] ? `style="background:${colorGradients[post.color]}"` : '';
         const imageContent = post.image
           ? `<img src="${post.image}" alt="${post.title}" class="post-image">`
           : `<div class="no-image">이미지 없음</div>`;
@@ -936,7 +982,7 @@
               <p class="post-text">${post.content}</p>
               <div class="post-meta">
                 <span class="post-color">
-                  <div class="color-dot"></div>
+                  <div class="color-dot" ${dotStyle}></div>
                   ${post.color}
                 </span>
                 <span>
@@ -963,6 +1009,11 @@
     colorFilter.addEventListener('change', (e) => {
       selectedColor = e.target.value;
       fetchPosts();
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value.trim().toLowerCase();
+      renderPosts();
     });
 
     fabBtn.addEventListener('click', () => {
@@ -1142,6 +1193,31 @@
         }
       };
       input.click();
+    });
+
+    // 드래그 앤 드롭 업로드
+    ['dragenter', 'dragover'].forEach(evt => {
+      uploadArea.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.add('dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(evt => {
+      uploadArea.addEventListener(evt, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.remove('dragover');
+      });
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      const files = e.dataTransfer?.files;
+      if (files && files[0]) {
+        selectedFile = files[0];
+        uploadText.innerText = selectedFile.name;
+      }
     });
 
     // Initial fetch
