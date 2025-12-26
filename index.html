@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>경기북과학고 분실물 저장소</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(to bottom right, #fff7ed, #fef3c7, #fef9c3);
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid #fed7aa;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-container {
+      max-width: 1152px;
+      margin: 0 auto;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(to bottom right, #fb923c, #f59e0b);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #ea580c, #d97706);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Main */
+    main {
+      max-width: 1152px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .posts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .posts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      h1 {
+        font-size: 1.875rem;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .posts-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* Post Card */
+    .post-card {
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      opacity: 0;
+      animation: fadeInUp 0.5s ease-out forwards;
+    }
+
+    .post-card:hover {
+      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .post-image-container {
+      position: relative;
+      height: 192px;
+      overflow: hidden;
+    }
+
+    .post-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .post-card:hover .post-image {
+      transform: scale(1.1);
+    }
+
+    .post-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #ea580c;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .post-content {
+      padding: 1.25rem;
+    }
+
+    .post-title {
+      font-size: 1.125rem;
+      font-weight: bold;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .post-text {
+      font-size: 0.875rem;
+      color: #4b5563;
+      margin-bottom: 0.75rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    .post-color {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: linear-gradient(to bottom right, #fb923c, #f59e0b);
+    }
+
+    /* Filter Button */
+    .filter-container {
+      position: fixed;
+      top: 6rem;
+      right: 1.5rem;
+      z-index: 30;
+    }
+
+    .filter-btn {
+      padding: 0.75rem 1.25rem;
+      background: white;
+      border: 1px solid #fed7aa;
+      border-radius: 1rem;
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #374151;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+      transform: scale(1.05);
+    }
+
+    .filter-btn:active {
+      transform: scale(0.95);
+    }
+
+    .filter-dropdown {
+      margin-top: 0.75rem;
+      background: white;
+      border: 1px solid #fed7aa;
+      border-radius: 1rem;
+      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+      padding: 1.25rem;
+      width: 256px;
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .filter-select:focus {
+      border-color: #fb923c;
+      box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.1);
+    }
+
+    /* FAB Button */
+    .fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(to bottom right, #f97316, #f59e0b);
+      border: none;
+      border-radius: 50%;
+      box-shadow: 0 20px 25px rgba(251, 146, 60, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 30;
+      transition: all 0.3s ease;
+    }
+
+    .fab:hover {
+      box-shadow: 0 20px 25px rgba(251, 146, 60, 0.5);
+      transform: scale(1.1);
+    }
+
+    .fab:active {
+      transform: scale(0.95);
+    }
+
+    .fab svg {
+      transition: transform 0.3s ease;
+    }
+
+    .fab:hover svg {
+      transform: rotate(90deg);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 1.5rem;
+      max-width: 512px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      animation: scaleIn 0.3s ease-out;
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      border-bottom: 1px solid #f3f4f6;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 1.5rem 1.5rem 0 0;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #1f2937;
+    }
+
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: #fb923c;
+      box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.1);
+    }
+
+    .form-textarea {
+      resize: none;
+    }
+
+    .upload-area {
+      border: 2px dashed #e5e7eb;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .upload-area:hover {
+      border-color: #fb923c;
+    }
+
+    .upload-icon {
+      margin: 0 auto 0.75rem;
+      color: #9ca3af;
+    }
+
+    .upload-text {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .upload-subtext {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      margin-top: 0.25rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(to right, #f97316, #f59e0b);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+      transform: scale(1.02);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 5rem 1rem;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .empty-text {
+      color: #6b7280;
+      font-size: 1.125rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* (추가) 삭제 버튼 + 확인 모달 버튼 스타일 */
+    .delete-btn {
+      margin-left: 0.5rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid #fed7aa;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #b45309;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .delete-btn:hover {
+      background: #fff7ed;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.08);
+    }
+    .delete-btn:active { transform: translateY(0); }
+
+    .confirm-modal {
+      background: white;
+      border-radius: 1.25rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      animation: scaleIn 0.25s ease-out;
+      overflow: hidden;
+    }
+    .confirm-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .confirm-title {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: #1f2937;
+    }
+    .confirm-body {
+      padding: 1rem 1.25rem;
+      color: #374151;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .confirm-actions {
+      padding: 1rem 1.25rem;
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      border-top: 1px solid #f3f4f6;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(10px);
+    }
+    .btn {
+      padding: 0.65rem 0.95rem;
+      border-radius: 0.85rem;
+      border: 1px solid #e5e7eb;
+      background: white;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.08);
+    }
+    .btn:active { transform: translateY(0); }
+    .btn-cancel {
+      color: #374151;
+    }
+    .btn-delete {
+      border: none;
+      color: white;
+      background: linear-gradient(to right, #ef4444, #f97316);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="header-content">
+        <div class="logo">
+          <svg width="24" height="24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </div>
+        <h1>경기북과학고 분실물 저장소</h1>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <div class="posts-grid" id="postsGrid"></div>
+    <div class="empty-state hidden" id="emptyState">
+      <div class="empty-icon">🔍</div>
+      <p class="empty-text">해당하는 분실물이 없습니다</p>
+    </div>
+  </main>
+
+  <!-- Filter Button -->
+  <div class="filter-container">
+    <button class="filter-btn" id="filterBtn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      필터
+    </button>
+    <div class="filter-dropdown hidden" id="filterDropdown">
+      <div class="filter-group">
+        <label class="filter-label">물건 유형</label>
+        <select class="filter-select" id="categoryFilter">
+          <option value="all">전체</option>
+          <option value="전자기기">전자기기</option>
+          <option value="필기구">필기구</option>
+          <option value="의류">의류</option>
+          <option value="액세서리">액세서리</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">색깔</label>
+        <select class="filter-select" id="colorFilter">
+          <option value="all">전체</option>
+          <option value="검정">검정</option>
+          <option value="흰색">흰색</option>
+          <option value="회색">회색</option>
+          <option value="빨강">빨강</option>
+          <option value="파랑">파랑</option>
+          <option value="초록">초록</option>
+          <option value="노랑">노랑</option>
+          <option value="기타">기타</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB Button -->
+  <button class="fab" id="fabBtn">
+    <svg width="32" height="32" fill="none" stroke="white" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <!-- Modal -->
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">분실물 등록</h2>
+        <button class="close-btn" id="closeBtn">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">제목</label>
+          <input type="text" class="form-input" id="titleInput" placeholder="예: 검은색 무선 이어폰 습득">
+        </div>
+        <div class="form-group">
+          <label class="form-label">사진</label>
+          <div class="upload-area">
+            <svg class="upload-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14Z"></path>
+              <path d="M23 19v13M5.5 9.5 9 13l-3.5 3.5M17 13H5"></path>
+            </svg>
+            <p class="upload-text">사진을 업로드해주세요</p>
+            <p class="upload-subtext">클릭하여 선택</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">상세 설명</label>
+          <textarea class="form-textarea" id="contentInput" rows="4" placeholder="습득 장소와 특징을 자세히 적어주세요"></textarea>
+        </div>
+
+        <!-- (복구) 물건 유형(카테고리) 다시 유지 + (추가) 위치 선택 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">물건 유형</label>
+            <select class="filter-select" id="categoryInput">
+              <option value="전자기기">전자기기</option>
+              <option value="필기구">필기구</option>
+              <option value="의류">의류</option>
+              <option value="액세서리">액세서리</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">색깔</label>
+            <select class="filter-select" id="colorInput">
+              <option value="검정">검정</option>
+              <option value="흰색">흰색</option>
+              <option value="회색">회색</option>
+              <option value="빨강">빨강</option>
+              <option value="파랑">파랑</option>
+              <option value="초록">초록</option>
+              <option value="노랑">노랑</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- (추가) 위치 선택(기존 요소 제거 없이 아래에 추가) -->
+        <div class="form-group">
+          <label class="form-label">습득 위치</label>
+          <select class="filter-select" id="locationInput">
+            <option value="강의동 2층">강의동 2층</option>
+            <option value="강의동 3층">강의동 3층</option>
+            <option value="강의동 4층">강의동 4층</option>
+            <option value="강의동 5층">강의동 5층</option>
+            <option value="실험동 2층">실험동 2층</option>
+            <option value="실험동 3층">실험동 3층</option>
+            <option value="실험동 4층">실험동 4층</option>
+            <option value="실험동 5층">실험동 5층</option>
+            <option value="도서관">도서관</option>
+            <option value="체육관">체육관</option>
+            <option value="운동장">정문</option>
+            <option value="기숙사">기숙사</option>
+            <option value="급식실">식당</option>
+            <option value="강당">강당</option>
+            <option value="레인보우메이커실">레인보우메이커실</option>
+            <option value="자습실">강당</option>
+            <option value="기타">기타</option>
+          </select>
+        </div>
+
+        <button class="submit-btn" id="submitBtn">등록하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- (추가) 삭제 확인 모달 -->
+  <div class="modal-overlay hidden" id="confirmOverlay">
+    <div class="confirm-modal" role="dialog" aria-modal="true">
+      <div class="confirm-header">
+        <div class="confirm-title">삭제 확인</div>
+        <button class="close-btn" id="confirmCloseBtn" aria-label="닫기">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="confirm-body">
+        삭제하시겠습니까?<br>
+        <span style="color:#6b7280;font-size:0.85rem;">삭제하면 되돌릴 수 없습니다.</span>
+      </div>
+      <div class="confirm-actions">
+        <button class="btn btn-cancel" id="confirmCancelBtn">취소</button>
+        <button class="btn btn-delete" id="confirmDeleteBtn">삭제</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const USER_KEY = 'lost_user_id';
+
+    function getUserId() {
+      let id = localStorage.getItem(USER_KEY);
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem(USER_KEY, id);
+      }
+      return id;
+    }
+
+    const currentUserId = getUserId();
+
+    // 초기 데이터
+    let posts = [
+      {
+        id: 1,
+        title: '검은색 무선 이어폰 습득',
+        image: 'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=400&h=300&fit=crop',
+        content: '3층 화장실 근처에서 발견했습니다. 케이스도 함께 있어요.',
+        category: '전자기기',
+        color: '검정',
+        location: '강의동 3층',
+        date: '2025-01-15',
+        authorId: null
+      },
+      {
+        id: 2,
+        title: '파란색 필통 발견',
+        image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&h=300&fit=crop',
+        content: '도서관 2층 열람실에서 찾았습니다.',
+        category: '필기구',
+        color: '파랑',
+        location: '도서관 2층',
+        date: '2025-01-14',
+        authorId: null
+      },
+      {
+        id: 3,
+        title: '회색 후드티 습득',
+        image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop',
+        content: '체육관 벤치에 있었어요. 사이즈 L입니다.',
+        category: '의류',
+        color: '회색',
+        location: '체육관',
+        date: '2025-01-13',
+        authorId: null
+      },
+      {
+        id: 4,
+        title: '빨간색 우산 발견',
+        image: 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?w=400&h=300&fit=crop',
+        content: '정문 근처에서 습득했습니다.',
+        category: '기타',
+        color: '빨강',
+        location: '정문',
+        date: '2025-01-12',
+        authorId: null
+      }
+    ];
+
+    let selectedCategory = 'all';
+    let selectedColor = 'all';
+
+    // Elements
+    const postsGrid = document.getElementById('postsGrid');
+    const emptyState = document.getElementById('emptyState');
+    const filterBtn = document.getElementById('filterBtn');
+    const filterDropdown = document.getElementById('filterDropdown');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const colorFilter = document.getElementById('colorFilter');
+    const fabBtn = document.getElementById('fabBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const closeBtn = document.getElementById('closeBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const titleInput = document.getElementById('titleInput');
+    const contentInput = document.getElementById('contentInput');
+    const categoryInput = document.getElementById('categoryInput');
+    const colorInput = document.getElementById('colorInput');
+    const locationInput = document.getElementById('locationInput');
+
+    // confirm modal elements
+    const confirmOverlay = document.getElementById('confirmOverlay');
+    const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const confirmCloseBtn = document.getElementById('confirmCloseBtn');
+
+    let pendingDeleteId = null;
+
+    // Render posts
+    function renderPosts() {
+      const filteredPosts = posts.filter(post => {
+        const categoryMatch = selectedCategory === 'all' || post.category === selectedCategory;
+        const colorMatch = selectedColor === 'all' || post.color === selectedColor;
+        return categoryMatch && colorMatch;
+      });
+
+      if (filteredPosts.length === 0) {
+        postsGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      postsGrid.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      postsGrid.innerHTML = filteredPosts.map((post, index) => {
+        const isMine = post.authorId === currentUserId;
+        return `
+          <div class="post-card" style="animation-delay: ${index * 0.1}s">
+            <div class="post-image-container">
+              <img src="${post.image}" alt="${post.title}" class="post-image">
+              <span class="post-badge">${post.category}</span>
+            </div>
+            <div class="post-content">
+              <h3 class="post-title">${post.title}</h3>
+              <p class="post-text">${post.content}</p>
+              <div class="post-meta">
+                <span class="post-color">
+                  <div class="color-dot"></div>
+                  ${post.color}
+                </span>
+                <span>
+                  ${post.location ? post.location + ' · ' : ''}${post.date}
+                  ${isMine ? `<button class="delete-btn" data-id="${post.id}">삭제</button>` : ``}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Event listeners
+    filterBtn.addEventListener('click', () => {
+      filterDropdown.classList.toggle('hidden');
+    });
+
+    categoryFilter.addEventListener('change', (e) => {
+      selectedCategory = e.target.value;
+      renderPosts();
+    });
+
+    colorFilter.addEventListener('change', (e) => {
+      selectedColor = e.target.value;
+      renderPosts();
+    });
+
+    fabBtn.addEventListener('click', () => {
+      modalOverlay.classList.remove('hidden');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modalOverlay.classList.add('hidden');
+    });
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.classList.add('hidden');
+      }
+    });
+
+    submitBtn.addEventListener('click', () => {
+      const title = titleInput.value.trim();
+      const content = contentInput.value.trim();
+      const category = categoryInput.value;   // 물건 유형(복구)
+      const color = colorInput.value;
+      const location = locationInput.value;   // 위치(추가)
+
+      if (!title || !content) {
+        alert('제목과 내용을 입력해주세요');
+        return;
+      }
+
+      const newPost = {
+        id: posts.length + 1,
+        title,
+        content,
+        category,
+        color,
+        location,
+        image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&h=300&fit=crop',
+        date: new Date().toLocaleDateString('ko-KR'),
+        authorId: currentUserId
+      };
+
+      posts.unshift(newPost);
+      renderPosts();
+
+      // Reset form
+      titleInput.value = '';
+      contentInput.value = '';
+      categoryInput.value = '전자기기';
+      colorInput.value = '검정';
+      locationInput.value = '강의동 1층';
+      modalOverlay.classList.add('hidden');
+    });
+
+    // (수정) 내 글 삭제 클릭 -> 예쁜 확인 모달 띄우기
+    postsGrid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.delete-btn');
+      if (!btn) return;
+
+      const id = btn.dataset.id;
+      const target = posts.find(p => String(p.id) === String(id));
+      if (!target) return;
+      if (target.authorId !== currentUserId) return; // 남의 글 방지
+
+      pendingDeleteId = id;
+      confirmOverlay.classList.remove('hidden');
+    });
+
+    function closeConfirm() {
+      pendingDeleteId = null;
+      confirmOverlay.classList.add('hidden');
+    }
+
+    confirmCancelBtn.addEventListener('click', closeConfirm);
+    confirmCloseBtn.addEventListener('click', closeConfirm);
+
+    confirmOverlay.addEventListener('click', (e) => {
+      if (e.target === confirmOverlay) closeConfirm();
+    });
+
+    confirmDeleteBtn.addEventListener('click', () => {
+      if (pendingDeleteId == null) return;
+      posts = posts.filter(p => String(p.id) !== String(pendingDeleteId));
+      closeConfirm();
+      renderPosts();
+    });
+
+    // Initial render
+    renderPosts();
+  </script>
+</body>
+</html>
