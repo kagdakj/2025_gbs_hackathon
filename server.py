@@ -162,10 +162,15 @@ def delete_post(post_id):
         return jsonify({'error': 'not allowed'}), 403
 
     if row['image_path']:
-        try:
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], row['image_path']))
-        except FileNotFoundError:
-            pass
+        # Ensure we only delete files within the uploads directory
+        filename_only = os.path.basename(row['image_path'])
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename_only)
+        if os.path.isfile(file_path):
+            try:
+                os.remove(file_path)
+            except OSError:
+                # Even if file removal fails, proceed with DB delete
+                pass
 
     conn.execute('DELETE FROM posts WHERE id = ?', (post_id,))
     conn.commit()
