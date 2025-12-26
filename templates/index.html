@@ -48,11 +48,116 @@
     .search-box {
       flex: 1;
       display: flex;
+      align-items: center;
+      gap: 0.5rem;
       justify-content: flex-end;
+      position: relative;
     }
 
     .search-box input {
       max-width: 320px;
+    }
+
+    /* Filter button/dropdown */
+    .filter-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .filter-btn {
+      padding: 0.65rem 1rem;
+      background: white;
+      border: 1px solid #fed7aa;
+      border-radius: 1rem;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: #374151;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      box-shadow: 0 10px 14px rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .filter-btn:active {
+      transform: translateY(0);
+    }
+
+    .filter-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 0.5rem);
+      background: white;
+      border: 1px solid #fed7aa;
+      border-radius: 1rem;
+      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+      padding: 1.25rem;
+      width: min(360px, 100vw - 2rem);
+      animation: slideDown 0.3s ease-out;
+      z-index: 30;
+    }
+
+    .filter-group {
+      margin-bottom: 1rem;
+    }
+
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 0.5rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.75rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .filter-select:focus {
+      border-color: #fb923c;
+      box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.1);
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 640px) {
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .search-box {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+      .search-box input {
+        width: 100%;
+      }
+      .filter-container {
+        margin-left: 0;
+      }
+      h1 {
+        font-size: 1.35rem;
+      }
+      .logo {
+        width: 32px;
+        height: 32px;
+      }
     }
 
     .logo {
@@ -207,77 +312,36 @@
       background: linear-gradient(to bottom right, #fb923c, #f59e0b);
     }
 
-    /* Filter Button */
-    .filter-container {
-      position: fixed;
-      top: 6rem;
-      right: 1.5rem;
-      z-index: 30;
-    }
-
-    .filter-btn {
-      padding: 0.75rem 1.25rem;
-      background: white;
-      border: 1px solid #fed7aa;
-      border-radius: 1rem;
-      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    /* Filter tags */
+    .tag-bar {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #374151;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
-    .filter-btn:hover {
-      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
-      transform: scale(1.05);
-    }
-
-    .filter-btn:active {
-      transform: scale(0.95);
-    }
-
-    .filter-dropdown {
-      margin-top: 0.75rem;
-      background: white;
+    .tag-btn {
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
       border: 1px solid #fed7aa;
-      border-radius: 1rem;
-      box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
-      padding: 1.25rem;
-      width: 256px;
-      animation: slideDown 0.3s ease-out;
+      background: white;
+      color: #b45309;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-size: 0.85rem;
     }
 
-    .filter-group {
-      margin-bottom: 1rem;
+    .tag-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
     }
 
-    .filter-group:last-child {
-      margin-bottom: 0;
-    }
-
-    .filter-label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 0.5rem;
-    }
-
-    .filter-select {
-      width: 100%;
-      padding: 0.5rem 1rem;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.75rem;
-      outline: none;
-      transition: all 0.2s;
-    }
-
-    .filter-select:focus {
-      border-color: #fb923c;
-      box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.1);
+    .tag-btn.active {
+      background: linear-gradient(135deg, #f97316, #f59e0b);
+      color: white;
+      border-color: #f59e0b;
+      box-shadow: 0 10px 15px rgba(249, 115, 22, 0.2);
     }
 
     /* FAB Button */
@@ -309,6 +373,7 @@
     }
 
     .fab svg {
+      display: block;
       transition: transform 0.3s ease;
     }
 
@@ -681,6 +746,41 @@
       </div>
       <div class="search-box">
         <input type="text" id="searchInput" class="form-input" placeholder="검색 (제목, 내용, 위치 등)">
+        <div class="filter-container">
+          <button class="filter-btn" id="filterBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="3 4 21 4 14 13 14 20 10 22 10 13 3 4"></polygon>
+            </svg>
+            필터
+          </button>
+          <div class="filter-dropdown hidden" id="filterDropdown">
+            <div class="filter-group">
+              <label class="filter-label">물건 유형</label>
+              <select class="filter-select" id="categoryFilter">
+                <option value="all">전체</option>
+                <option value="전자기기">전자기기</option>
+                <option value="필기구">필기구</option>
+                <option value="의류">의류</option>
+                <option value="액세서리">액세서리</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label class="filter-label">색깔</label>
+              <select class="filter-select" id="colorFilter">
+                <option value="all">전체</option>
+                <option value="검정">검정</option>
+                <option value="흰색">흰색</option>
+                <option value="회색">회색</option>
+                <option value="빨강">빨강</option>
+                <option value="파랑">파랑</option>
+                <option value="초록">초록</option>
+                <option value="노랑">노랑</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -694,48 +794,11 @@
     </div>
   </main>
 
-  <!-- Filter Button -->
-  <div class="filter-container">
-    <button class="filter-btn" id="filterBtn">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-      </svg>
-      필터
-    </button>
-    <div class="filter-dropdown hidden" id="filterDropdown">
-      <div class="filter-group">
-        <label class="filter-label">물건 유형</label>
-        <select class="filter-select" id="categoryFilter">
-          <option value="all">전체</option>
-          <option value="전자기기">전자기기</option>
-          <option value="필기구">필기구</option>
-          <option value="의류">의류</option>
-          <option value="액세서리">액세서리</option>
-          <option value="기타">기타</option>
-        </select>
-      </div>
-      <div class="filter-group">
-        <label class="filter-label">색깔</label>
-        <select class="filter-select" id="colorFilter">
-          <option value="all">전체</option>
-          <option value="검정">검정</option>
-          <option value="흰색">흰색</option>
-          <option value="회색">회색</option>
-          <option value="빨강">빨강</option>
-          <option value="파랑">파랑</option>
-          <option value="초록">초록</option>
-          <option value="노랑">노랑</option>
-          <option value="기타">기타</option>
-        </select>
-      </div>
-    </div>
-  </div>
-
   <!-- FAB Button -->
   <button class="fab" id="fabBtn">
-    <svg width="32" height="32" fill="none" stroke="white" stroke-width="2">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+      <line x1="4" y1="12" x2="20" y2="12"></line>
     </svg>
   </button>
 
@@ -912,11 +975,11 @@
     // Elements
     const postsGrid = document.getElementById('postsGrid');
     const emptyState = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
     const filterBtn = document.getElementById('filterBtn');
     const filterDropdown = document.getElementById('filterDropdown');
     const categoryFilter = document.getElementById('categoryFilter');
     const colorFilter = document.getElementById('colorFilter');
-    const searchInput = document.getElementById('searchInput');
     const fabBtn = document.getElementById('fabBtn');
     const modalOverlay = document.getElementById('modalOverlay');
     const closeBtn = document.getElementById('closeBtn');
@@ -945,15 +1008,17 @@
         post.category,
         post.color
       ].filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(term);
+      return term.split(/\s+/).filter(Boolean).every(t => haystack.includes(t));
+    }
+
+    function updateSearchTerm() {
+      searchTerm = searchInput.value.trim().toLowerCase();
     }
 
     function renderPosts() {
       const filteredPosts = posts.filter(post => {
-        const categoryMatch = selectedCategory === 'all' || post.category === selectedCategory;
-        const colorMatch = selectedColor === 'all' || post.color === selectedColor;
         const searchMatch = matchesSearch(post, searchTerm);
-        return categoryMatch && colorMatch && searchMatch;
+        return searchMatch;
       });
 
       if (filteredPosts.length === 0) {
@@ -997,8 +1062,21 @@
     }
 
     // Event listeners
-    filterBtn.addEventListener('click', () => {
+    searchInput.addEventListener('input', (e) => {
+      updateSearchTerm();
+      renderPosts();
+    });
+
+    // 필터 드롭다운
+    filterBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       filterDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!filterDropdown.contains(e.target) && !filterBtn.contains(e.target)) {
+        filterDropdown.classList.add('hidden');
+      }
     });
 
     categoryFilter.addEventListener('change', (e) => {
@@ -1009,11 +1087,6 @@
     colorFilter.addEventListener('change', (e) => {
       selectedColor = e.target.value;
       fetchPosts();
-    });
-
-    searchInput.addEventListener('input', (e) => {
-      searchTerm = e.target.value.trim().toLowerCase();
-      renderPosts();
     });
 
     fabBtn.addEventListener('click', () => {
