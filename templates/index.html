@@ -121,6 +121,18 @@
       transition: transform 0.5s ease;
     }
 
+    .no-image {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b45309;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
     .post-card:hover .post-image {
       transform: scale(1.1);
     }
@@ -544,6 +556,81 @@
       background: linear-gradient(to right, #ef4444, #f97316);
     }
 
+    /* Detail modal */
+    .detail-modal {
+      background: white;
+      border-radius: 1.25rem;
+      max-width: 720px;
+      width: 100%;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      animation: scaleIn 0.25s ease-out;
+    }
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .detail-body {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .detail-body {
+        grid-template-columns: 1.1fr 1fr;
+      }
+    }
+    .detail-image {
+      width: 100%;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      border-radius: 1rem;
+      background: #f3f4f6;
+    }
+    .detail-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #b45309;
+      font-weight: 700;
+      border-radius: 1rem;
+      min-height: 240px;
+    }
+    .detail-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: #1f2937;
+    }
+    .detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .detail-chip {
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      background: #fff7ed;
+      border: 1px solid #fde68a;
+      color: #b45309;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .detail-content {
+      color: #374151;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
     /* Animations */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
@@ -745,6 +832,33 @@
     </div>
   </div>
 
+  <!-- 상세 보기 모달 -->
+  <div class="modal-overlay hidden" id="detailOverlay">
+    <div class="detail-modal" role="dialog" aria-modal="true">
+      <div class="detail-header">
+        <div class="detail-title" id="detailTitle"></div>
+        <button class="close-btn" id="detailCloseBtn" aria-label="닫기">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="detail-body">
+        <div id="detailImageWrapper"></div>
+        <div>
+          <div class="detail-meta">
+            <span class="detail-chip" id="detailCategory"></span>
+            <span class="detail-chip" id="detailColor"></span>
+            <span class="detail-chip" id="detailLocation"></span>
+            <span class="detail-chip" id="detailDate"></span>
+          </div>
+          <div class="detail-content" id="detailContent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const USER_KEY = 'lost_user_id';
 
@@ -759,53 +873,7 @@
 
     const currentUserId = getUserId();
 
-    // 초기 데이터
-    let posts = [
-      {
-        id: 1,
-        title: '검은색 무선 이어폰 습득',
-        image: 'https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=400&h=300&fit=crop',
-        content: '3층 화장실 근처에서 발견했습니다. 케이스도 함께 있어요.',
-        category: '전자기기',
-        color: '검정',
-        location: '강의동 3층',
-        date: '2025-01-15',
-        authorId: null
-      },
-      {
-        id: 2,
-        title: '파란색 필통 발견',
-        image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&h=300&fit=crop',
-        content: '도서관 2층 열람실에서 찾았습니다.',
-        category: '필기구',
-        color: '파랑',
-        location: '도서관 2층',
-        date: '2025-01-14',
-        authorId: null
-      },
-      {
-        id: 3,
-        title: '회색 후드티 습득',
-        image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=300&fit=crop',
-        content: '체육관 벤치에 있었어요. 사이즈 L입니다.',
-        category: '의류',
-        color: '회색',
-        location: '체육관',
-        date: '2025-01-13',
-        authorId: null
-      },
-      {
-        id: 4,
-        title: '빨간색 우산 발견',
-        image: 'https://images.unsplash.com/photo-1534531173927-aeb928d54385?w=400&h=300&fit=crop',
-        content: '정문 근처에서 습득했습니다.',
-        category: '기타',
-        color: '빨강',
-        location: '정문',
-        date: '2025-01-12',
-        authorId: null
-      }
-    ];
+    let posts = [];
 
     let selectedCategory = 'all';
     let selectedColor = 'all';
@@ -854,10 +922,13 @@
 
       postsGrid.innerHTML = filteredPosts.map((post, index) => {
         const isMine = post.authorId === currentUserId;
+        const imageContent = post.image
+          ? `<img src="${post.image}" alt="${post.title}" class="post-image">`
+          : `<div class="no-image">이미지 없음</div>`;
         return `
-          <div class="post-card" style="animation-delay: ${index * 0.1}s">
+          <div class="post-card" data-id="${post.id}" style="animation-delay: ${index * 0.1}s">
             <div class="post-image-container">
-              <img src="${post.image}" alt="${post.title}" class="post-image">
+              ${imageContent}
               <span class="post-badge">${post.category}</span>
             </div>
             <div class="post-content">
@@ -886,12 +957,12 @@
 
     categoryFilter.addEventListener('change', (e) => {
       selectedCategory = e.target.value;
-      renderPosts();
+      fetchPosts();
     });
 
     colorFilter.addEventListener('change', (e) => {
       selectedColor = e.target.value;
-      renderPosts();
+      fetchPosts();
     });
 
     fabBtn.addEventListener('click', () => {
@@ -908,30 +979,55 @@
       }
     });
 
-    submitBtn.addEventListener('click', () => {
+    async function fetchPosts() {
+      const params = new URLSearchParams();
+      params.set('category', selectedCategory);
+      params.set('color', selectedColor);
+      const res = await fetch(`/api/posts?${params.toString()}`);
+      if (!res.ok) {
+        alert('목록을 불러오지 못했습니다');
+        return;
+      }
+      posts = await res.json();
+      renderPosts();
+    }
+
+    async function submitPost() {
       const title = titleInput.value.trim();
       const content = contentInput.value.trim();
-      const category = categoryInput.value;   // 물건 유형(복구)
+      const category = categoryInput.value;
       const color = colorInput.value;
-      const location = locationInput.value;   // 위치(추가)
+      const location = locationInput.value;
 
       if (!title || !content) {
         alert('제목과 내용을 입력해주세요');
         return;
       }
 
-      const newPost = {
-        id: posts.length + 1,
-        title,
-        content,
-        category,
-        color,
-        location,
-        image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&h=300&fit=crop',
-        date: new Date().toLocaleDateString('ko-KR'),
-        authorId: currentUserId
-      };
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('category', category);
+      formData.append('color', color);
+      formData.append('location', location);
+      formData.append('authorId', currentUserId);
 
+      if (selectedFile) {
+        formData.append('image', selectedFile);
+      }
+
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || '등록에 실패했습니다');
+        return;
+      }
+
+      const newPost = await res.json();
       posts.unshift(newPost);
       renderPosts();
 
@@ -940,22 +1036,32 @@
       contentInput.value = '';
       categoryInput.value = '전자기기';
       colorInput.value = '검정';
-      locationInput.value = '강의동 1층';
+      locationInput.value = '강의동 2층';
+      selectedFile = null;
+      uploadText.innerText = '사진을 업로드해주세요';
       modalOverlay.classList.add('hidden');
-    });
+    }
 
-    // (수정) 내 글 삭제 클릭 -> 예쁜 확인 모달 띄우기
+    submitBtn.addEventListener('click', submitPost);
+
+    // 카드 클릭 / 삭제 분기
     postsGrid.addEventListener('click', (e) => {
       const btn = e.target.closest('.delete-btn');
-      if (!btn) return;
+      if (btn) {
+        const id = btn.dataset.id;
+        const target = posts.find(p => String(p.id) === String(id));
+        if (!target) return;
+        if (target.authorId !== currentUserId) return; // 남의 글 방지
+        pendingDeleteId = id;
+        confirmOverlay.classList.remove('hidden');
+        return;
+      }
 
-      const id = btn.dataset.id;
+      const card = e.target.closest('.post-card');
+      if (!card) return;
+      const id = card.dataset.id;
       const target = posts.find(p => String(p.id) === String(id));
-      if (!target) return;
-      if (target.authorId !== currentUserId) return; // 남의 글 방지
-
-      pendingDeleteId = id;
-      confirmOverlay.classList.remove('hidden');
+      if (target) showDetail(target);
     });
 
     function closeConfirm() {
@@ -970,15 +1076,76 @@
       if (e.target === confirmOverlay) closeConfirm();
     });
 
-    confirmDeleteBtn.addEventListener('click', () => {
+    confirmDeleteBtn.addEventListener('click', async () => {
       if (pendingDeleteId == null) return;
-      posts = posts.filter(p => String(p.id) !== String(pendingDeleteId));
+      const id = pendingDeleteId;
+      const res = await fetch(`/api/posts/${id}?authorId=${currentUserId}`, { method: 'DELETE' });
+      if (!res.ok) {
+        alert('삭제 실패');
+        return;
+      }
+      posts = posts.filter(p => String(p.id) !== String(id));
       closeConfirm();
       renderPosts();
     });
 
-    // Initial render
-    renderPosts();
+    // 상세 모달
+    const detailOverlay = document.getElementById('detailOverlay');
+    const detailCloseBtn = document.getElementById('detailCloseBtn');
+    const detailTitle = document.getElementById('detailTitle');
+    const detailCategory = document.getElementById('detailCategory');
+    const detailColor = document.getElementById('detailColor');
+    const detailLocation = document.getElementById('detailLocation');
+    const detailDate = document.getElementById('detailDate');
+    const detailContent = document.getElementById('detailContent');
+    const detailImageWrapper = document.getElementById('detailImageWrapper');
+
+    function showDetail(post) {
+      detailTitle.textContent = post.title;
+      detailCategory.textContent = post.category;
+      detailColor.textContent = post.color;
+      detailLocation.textContent = post.location || '위치 미상';
+      detailDate.textContent = post.date || '';
+      detailContent.textContent = post.content;
+
+      if (post.image) {
+        detailImageWrapper.innerHTML = `<img src="${post.image}" alt="${post.title}" class="detail-image">`;
+      } else {
+        detailImageWrapper.innerHTML = `<div class="detail-placeholder">이미지 없음</div>`;
+      }
+
+      detailOverlay.classList.remove('hidden');
+    }
+
+    function closeDetail() {
+      detailOverlay.classList.add('hidden');
+    }
+
+    detailCloseBtn.addEventListener('click', closeDetail);
+    detailOverlay.addEventListener('click', (e) => {
+      if (e.target === detailOverlay) closeDetail();
+    });
+
+    // 파일 업로드 처리
+    const uploadArea = document.querySelector('.upload-area');
+    const uploadText = document.querySelector('.upload-text');
+    let selectedFile = null;
+
+    uploadArea.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = () => {
+        if (input.files && input.files[0]) {
+          selectedFile = input.files[0];
+          uploadText.innerText = selectedFile.name;
+        }
+      };
+      input.click();
+    });
+
+    // Initial fetch
+    fetchPosts();
   </script>
 </body>
 </html>
